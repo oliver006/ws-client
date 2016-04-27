@@ -1,2 +1,8 @@
 # ws-client
-A simple command line websocket client, written in Golang, binaries available for download
+A simple command line websocket client, written in Golang
+
+
+## Installation
+
+instructions go here
+
