@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -11,26 +12,45 @@ import (
 	"gopkg.in/readline.v1"
 )
 
+var (
+	VERSION = "v0.2.1"
+
+	showVersion = flag.Bool("version", false, "show version number and exit")
+	verbose     = flag.Bool("v", false, "verbose output")
+)
+
 func main() {
+	flag.Parse()
+
+	if *showVersion || *verbose {
+		fmt.Printf("ws-client %s \n", VERSION)
+		fmt.Println("https://github.com/oliver006/ws-client/")
+		fmt.Println()
+		if *showVersion {
+			os.Exit(0)
+		}
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println("Usage:")
 		fmt.Println("  ws-client <<ws:// or wss:// URL>>")
 		os.Exit(-1)
 	}
 
-	addr := strings.Join(os.Args[1:], "")
+	addr := os.Args[len(os.Args)-1]
 	if !strings.HasPrefix(addr, "ws://") && !strings.HasPrefix(addr, "wss://") {
 		addr = "ws://" + addr
 	}
 
-	fmt.Printf("connecting to %s\n", addr)
+	if *verbose {
+		fmt.Printf("connecting to %s\n", addr)
+	}
 	c, _, err := websocket.DefaultDialer.Dial(addr, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
 	defer c.Close()
-
 	fmt.Printf("connected to  %s\n", addr)
 
 	interrupt := make(chan os.Signal, 1)
