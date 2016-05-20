@@ -22,7 +22,7 @@ var (
 func main() {
 	flag.Parse()
 
-	if *showVersion || *verbose {
+	if *showVersion || *verbose || len(os.Args) < 2 {
 		fmt.Printf("ws-client %s \n", VERSION)
 		fmt.Println("https://github.com/oliver006/ws-client/")
 		fmt.Println()
