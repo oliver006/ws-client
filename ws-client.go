@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"gopkg.in/readline.v1"
@@ -17,6 +18,7 @@ var (
 
 	showVersion = flag.Bool("version", false, "show version number and exit")
 	verbose     = flag.Bool("v", false, "verbose output")
+	useTsPrefix = flag.Bool("ts-prefix", true, "timestamp prefix")
 )
 
 func main() {
@@ -65,6 +67,18 @@ func main() {
 
 	defer rl.Close()
 
+	if *useTsPrefix {
+		tsStr := time.Now().Format("[15:04] ")
+		rl.SetPrompt(fmt.Sprintf("%s\033[32m»\033[0m ", tsStr))
+		go func() {
+			c := time.Tick(30 * time.Second)
+			for now := range c {
+				tsStr := now.Format("[15:04] ")
+				rl.SetPrompt(fmt.Sprintf("%s\033[32m»\033[0m ", tsStr))
+				rl.Refresh()
+			}
+		}()
+	}
 	go func() {
 		for {
 			_, message, err := c.ReadMessage()
@@ -73,7 +87,12 @@ func main() {
 				close(interrupt)
 				return
 			}
-			io.WriteString(rl.Stdout(), fmt.Sprintf("\033[31m«\033[0m %s\n", message))
+			tsStr := ""
+
+			if *useTsPrefix {
+				tsStr = time.Now().Format("[15:04] ")
+			}
+			io.WriteString(rl.Stdout(), fmt.Sprintf("%s\033[31m«\033[0m %s\n", tsStr, message))
 		}
 	}()
 
