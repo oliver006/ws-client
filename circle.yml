@@ -3,7 +3,7 @@ machine:
     IMPORT_PATH: "github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
 
 deployment:
-  release:
+  publish:
   branch: master
   commands:
     - go get github.com/mitchellh/gox
