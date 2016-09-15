@@ -10,4 +10,3 @@ deployment:
       - go get github.com/tcnksm/ghr
       - gox -output "dist/ws-client_{{.OS}}_{{.Arch}}"
       - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` dist/
-
