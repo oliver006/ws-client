@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	VERSION = "" // filled in by build
+	VERSION = "// filled in by build //"
 
 	showVersion = flag.Bool("version", false, "show version number and exit")
 	verbose     = flag.Bool("v", false, "verbose output")
