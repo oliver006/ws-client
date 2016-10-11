@@ -4,13 +4,15 @@ A simple command line websocket client, written in Golang
 
 ## Installation
 
-instructions go here
+```
+$ go install github.com/oliver006/ws-client
+```
 
 
 ## Usage
 
 ```
-$ go run ws-client.go ws://echo.websocket.org
+$ ws-client ws://echo.websocket.org
 connected to  ws://echo.websocket.org
 » yo
 « yo

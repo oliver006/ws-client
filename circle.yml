@@ -1,12 +1,25 @@
 machine:
   environment:
     IMPORT_PATH: "github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
+    COVERAGE_PROFILE: "/home/ubuntu/coverage.out"
+
+
+test:
+  pre:
+    - go vet ./...
+    - go get github.com/mattn/goveralls
+    - go get golang.org/x/tools/cmd/cover
+  override:
+    - go test -v -cover -race -coverprofile=$COVERAGE_PROFILE .
+  post:
+    - if [ -n "$COVERALLS_TOKEN" ]; then /home/ubuntu/.go_workspace/bin/goveralls -coverprofile=$COVERAGE_PROFILE -service=circle-ci -repotoken=$COVERALLS_TOKEN ;  fi
+
 
 deployment:
-  publish: 
-    branch: master
+  publish:
+    tag: /v.*/
     commands:
       - go get github.com/mitchellh/gox
       - go get github.com/tcnksm/ghr
-      - gox -output "dist/ws-client_{{.OS}}_{{.Arch}}"
-      - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` dist/
+      - gox -ldflags "-X main.VERSION $CIRCLE_TAG" -output "dist/ws-client_{{.OS}}_{{.Arch}}"
+      - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $CIRCLE_TAG dist/
